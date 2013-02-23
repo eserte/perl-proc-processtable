@@ -10,6 +10,18 @@ if (!$supported_os{$^O}) {
     exit 0;
 }
 
+# The freebsd-procfs implementation is also not supported
+# XXX Unfortunately the detection is not optimal here, using
+# the same code as in hints/freebsd.pl
+if ($^O eq 'freebsd') {
+    require Config;	
+    my($maj) = $Config::Config{osvers} =~ m{^(\d+)};
+    if ($maj < 5) {
+	plan skip_all => "This test is not support in the procfs implementation";
+	exit 0;
+    }
+}
+
 # Capabilities
 use constant CAN_GROUPS => $^O eq 'freebsd';
 use constant CAN_ONPRO  => $^O eq 'freebsd';
